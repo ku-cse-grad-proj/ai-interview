@@ -1,9 +1,9 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync } from 'fastify'
 
-const ping: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-  fastify.get("/ping", async (request, reply) => {
-    return { msg: "pong" };
-  });
-};
+const ping: FastifyPluginAsync = async (fastify): Promise<void> => {
+  fastify.get('/ping', async () => {
+    return { msg: 'pong' }
+  })
+}
 
-export default ping;
+export default ping

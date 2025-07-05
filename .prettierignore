@@ -1,0 +1,10 @@
+# Ignore artifacts
+node_modules
+.next
+dist
+.venv
+pnpm-lock.yaml
+poetry.lock
+
+# Ignore package-lock.json files
+package-lock.json

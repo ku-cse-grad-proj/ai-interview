@@ -1,12 +1,12 @@
-import { test } from 'node:test'
 import * as assert from 'node:assert'
+import { test } from 'node:test'
 
 import Fastify from 'fastify'
+
 import Support from '../../src/plugins/support'
 
-test('support works standalone', async (t) => {
+test('support works standalone', async () => {
   const fastify = Fastify()
-  // eslint-disable-next-line no-void
   void fastify.register(Support)
   await fastify.ready()
 
