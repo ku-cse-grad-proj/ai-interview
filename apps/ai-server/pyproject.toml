@@ -6,7 +6,7 @@ authors = [
     {name = "나형진",email = "skgudwls@konkuk.ac.kr"}
 ]
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
+requires-python = "^3.11"
 dependencies = [
     "fastapi (>=0.115.13,<0.116.0)",
     "uvicorn[standard] (>=0.34.3,<0.35.0)",
