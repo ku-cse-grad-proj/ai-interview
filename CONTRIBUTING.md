@@ -8,8 +8,9 @@
 
 - **pyenv**: Python 버전 관리를 위한 도구입니다.
   - 설치 가이드: [https://github.com/pyenv/pyenv#installation](https://github.com/pyenv/pyenv#installation)
-- **pnpm**: JavaScript/TypeScript 프로젝트를 위한 권장 패키지 관리자입니다.
-  - 설치 가이드: [https://pnpm.io/installation](https://pnpm.io/installation)
+- **pnpm (Corepack을 통해 관리)**: JavaScript/TypeScript 프로젝트를 위한 권장 패키지 관리자입니다. `corepack`을 사용하여 프로젝트에 명시된 `pnpm` 버전을 자동으로 사용합니다.
+  - Node.js 16.9 이상 버전에는 `corepack`이 기본으로 포함되어 있습니다.
+  - `corepack` 활성화 및 `pnpm` 버전 설정은 초기 설정 단계에서 안내됩니다.
 - **Poetry**: `apps/ai-server` 내 Python 의존성 및 가상 환경 관리를 위한 도구입니다.
   - 설치 가이드: [https://python-poetry.org/docs/#installation](https://python-poetry.org/docs/#installation)
 
@@ -22,7 +23,17 @@
     cd ai-interview
     ```
 
-2.  **Python 버전 설치:**
+2.  **Corepack 활성화 및 pnpm 버전 설정:**
+    이 프로젝트는 `corepack`을 사용하여 `pnpm` 버전을 관리합니다.
+
+    ```bash
+    corepack enable
+    corepack prepare pnpm@10.12.2 --activate
+    ```
+
+    이 명령어는 `corepack`을 활성화하고, `package.json`에 명시된 `pnpm` 버전(10.12.2)을 미리 설치하고 활성화하여 프로젝트 전체에서 일관된 `pnpm` 버전을 사용하도록 합니다.
+
+3.  **Python 버전 설치:**
     이 프로젝트는 `pyenv`를 사용하여 Python 버전을 관리합니다.
 
     ```bash
@@ -32,14 +43,14 @@
 
     이 명령어는 `.python-version`에 지정된 Python 버전을 설치하고 현재 디렉토리에 해당 버전을 설정합니다.
 
-3.  **pnpm 의존성 설치:**
+4.  **pnpm 의존성 설치:**
     프로젝트 루트로 이동하여 모든 JavaScript/TypeScript 의존성을 설치합니다.
 
     ```bash
     pnpm install
     ```
 
-4.  **`ai-server`를 위한 Poetry 의존성 설치:**
+5.  **`ai-server`를 위한 Poetry 의존성 설치:**
     `apps/ai-server` 디렉토리로 이동하여 Poetry를 사용하여 Python 의존성을 설치합니다.
     ```bash
     cd apps/ai-server
