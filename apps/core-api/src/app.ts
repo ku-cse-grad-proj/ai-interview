@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 
 import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
+import cookie from '@fastify/cookie'
 import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
 
 export interface AppOptions
@@ -16,6 +17,9 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // Place here your custom code!
 
   // Do not touch the following lines
+
+  // Register cookie plugin explicitly
+  void fastify.register(cookie)
 
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
