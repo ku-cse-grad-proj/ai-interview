@@ -50,3 +50,6 @@ jobs:
 
       - name: Test
         run: pnpm test
+        env:
+          DATABASE_URL: 'file:./test.db'
+          JWT_SECRET: 'test-secret-key-for-ci'
