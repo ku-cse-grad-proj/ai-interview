@@ -1,41 +1,11 @@
-import { join } from 'node:path'
-
-import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
-import cookie from '@fastify/cookie'
 import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
+import fp from 'fastify-plugin'
 
-export interface AppOptions
-  extends FastifyServerOptions,
-    Partial<AutoloadPluginOptions> {}
-// Pass --options via CLI arguments in command to enable these options.
-const options: AppOptions = {}
+export type AppOptions = FastifyServerOptions & Partial<unknown>
 
-const app: FastifyPluginAsync<AppOptions> = async (
-  fastify,
-  opts,
-): Promise<void> => {
-  // Place here your custom code!
-
-  // Do not touch the following lines
-
-  // Register cookie plugin explicitly
-  void fastify.register(cookie)
-
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'plugins'),
-    options: opts,
-  })
-
-  // This loads all plugins defined in routes
-  // define your routes in one of these
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'routes'),
-    options: opts,
-  })
+const app: FastifyPluginAsync<AppOptions> = async (): Promise<void> => {
+  // All app-level plugins should be registered here
 }
 
-export default app
-export { app, options }
+export default fp(app)
+export { app }
