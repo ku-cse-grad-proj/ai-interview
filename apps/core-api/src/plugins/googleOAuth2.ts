@@ -20,7 +20,7 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
       auth: oauthPlugin.GOOGLE_CONFIGURATION,
     },
     startRedirectPath: '/oauth2/google',
-    callbackUri: 'http://localhost:3000/oauth2/google/callback',
+    callbackUri: 'http://localhost:3000/oauth2/google/callback', // 127.0.0.1 에서 시도시 실패
     callbackUriParams: {},
     cookie: {
       secure: false, // 개발 환경에서는 false로 설정
@@ -45,4 +45,4 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
   })
 }
 
-module.exports = fp(googleOAuth2Plugin)
+export default fp(googleOAuth2Plugin)
