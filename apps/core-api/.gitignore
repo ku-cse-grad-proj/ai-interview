@@ -68,3 +68,6 @@ dist
 .env
 
 /src/generated/prisma
+
+# Prisma
+/prisma/*.db

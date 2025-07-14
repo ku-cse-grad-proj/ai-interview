@@ -1,4 +1,5 @@
 import oauthPlugin, { OAuth2Namespace } from '@fastify/oauth2'
+import axios from 'axios'
 import { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 
@@ -6,6 +7,12 @@ declare module 'fastify' {
   interface FastifyInstance {
     googleOAuth2: OAuth2Namespace
   }
+}
+
+interface GoogleUserInfo {
+  email: string
+  name: string
+  picture: string
 }
 
 const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
@@ -32,12 +39,33 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
       const { token } =
         await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
 
-      console.log(token.access_token)
+      // Google 사용자 정보 가져오기
+      const { data: userInfo } = await axios.get<GoogleUserInfo>(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        {
+          headers: {
+            Authorization: `Bearer ${token.access_token}`,
+          },
+        },
+      )
 
-      // if later need to refresh the token this can be used
-      // const { token: newToken } = await this.getNewAccessTokenUsingRefreshToken(token)
+      // DB에서 사용자 조회 또는 생성
+      let user = await fastify.prisma.user.findUnique({
+        where: { email: userInfo.email },
+      })
 
-      reply.send({ access_token: token.access_token })
+      if (!user) {
+        user = await fastify.prisma.user.create({
+          data: {
+            email: userInfo.email,
+            name: userInfo.name,
+            provider: 'GOOGLE',
+          },
+        })
+      }
+
+      // TODO: 다음 태스크에서 JWT 발급 예정
+      reply.send({ user })
     } catch (error) {
       fastify.log.error(error)
       reply.status(500).send({ message: 'Google login failed' })
