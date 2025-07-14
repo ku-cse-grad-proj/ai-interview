@@ -36,7 +36,7 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
 
   fastify.get('/oauth2/google/callback', async (req, reply) => {
     try {
-      const { token } =
+      const { token: googleToken } =
         await fastify.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(req)
 
       // Google 사용자 정보 가져오기
@@ -44,7 +44,7 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
         'https://www.googleapis.com/oauth2/v3/userinfo',
         {
           headers: {
-            Authorization: `Bearer ${token.access_token}`,
+            Authorization: `Bearer ${googleToken.access_token}`,
           },
         },
       )
@@ -64,8 +64,10 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
         })
       }
 
-      // TODO: 다음 태스크에서 JWT 발급 예정
-      reply.send({ user })
+      // 사용자를 위한 JWT 생성
+      const serviceToken = fastify.jwt.sign({ userId: user.id })
+
+      reply.send({ serviceToken })
     } catch (error) {
       fastify.log.error(error)
       reply.status(500).send({ message: 'Google login failed' })
