@@ -65,12 +65,20 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
       }
 
       // 사용자를 위한 JWT 생성
-      const serviceToken = fastify.jwt.sign({ userId: user.id })
+      const token = fastify.jwt.sign({ userId: user.id })
 
-      reply.send({ serviceToken })
+      // JWT를 쿠키에 담아 프론트엔드로 리디렉션
+      reply
+        .setCookie('auth_token', token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // 프로덕션에서는 true로 설정
+        })
+        .redirect('http://localhost:4000')
     } catch (error) {
       fastify.log.error(error)
-      reply.status(500).send({ message: 'Google login failed' })
+      // 실패 시 에러 메시지와 함께 프론트엔드로 리디렉션할 수도 있음
+      reply.redirect('http://localhost:4000/login-failed')
     }
   })
 }
