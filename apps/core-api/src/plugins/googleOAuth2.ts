@@ -1,3 +1,4 @@
+import { SignPayloadType } from '@fastify/jwt'
 import oauthPlugin, { OAuth2Namespace } from '@fastify/oauth2'
 import axios from 'axios'
 import { FastifyPluginAsync } from 'fastify'
@@ -65,19 +66,28 @@ const googleOAuth2Plugin: FastifyPluginAsync = async (fastify) => {
       }
 
       // 사용자를 위한 JWT 생성
-      const token = fastify.jwt.sign({ userId: user.id })
+      const payload: SignPayloadType = { userId: user.id }
+      const accessToken: string = await reply.jwtSign(payload, {
+        expiresIn: '15m',
+      })
+      const refreshToken: string = await reply.jwtSign(payload, {
+        expiresIn: '7d',
+      })
 
       // JWT를 쿠키에 담아 프론트엔드로 리디렉션
       reply
-        .setCookie('auth_token', token, {
+        .setCookie('refresh_token', refreshToken, {
           path: '/',
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production', // 프로덕션에서는 true로 설정
+          sameSite: 'lax', // CSRF 공격 차단 + 정상적인 요청에서는 GET 허용
         })
-        .redirect('http://localhost:4000')
+        .redirect(
+          `http://localhost:4000/auth/callback?accessToken=${accessToken}`,
+        ) // AccessToken은 쿼리로 전달
     } catch (error) {
       fastify.log.error(error)
-      // 실패 시 에러 메시지와 함께 프론트엔드로 리디렉션할 수도 있음
+      // 실패 시 에러 메시지와 함께 프론트엔드로 리디렉션할 수도 있습니다.
       reply.redirect('http://localhost:4000/login-failed')
     }
   })
